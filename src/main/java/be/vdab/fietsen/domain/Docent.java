@@ -5,6 +5,9 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "docenten")
@@ -23,6 +26,12 @@ public class Docent {
     private BigDecimal wedde;
     private String emailAdres;
 
+    @ElementCollection
+    @CollectionTable(name = "docentenbijnamen",
+            joinColumns = @JoinColumn(name = "docentId") )
+    @Column(name = "bijnaam")
+    private Set<String> bijnamen;
+
 
     @Enumerated(EnumType.STRING)
     private Geslacht geslacht;
@@ -35,6 +44,7 @@ public class Docent {
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.geslacht = geslacht;
+        this.bijnamen = new LinkedHashSet<>();
     }
 
     protected Docent() {}
@@ -61,6 +71,20 @@ public class Docent {
 
     public long getId() {
         return id;
+    }
+
+    public boolean addBijnaam(String bijnaam) {
+        if (bijnaam.trim().isEmpty()) {
+            throw new IllegalArgumentException();
+        }
+        return bijnamen.add(bijnaam);
+    }
+
+    public boolean removeBijnaam(String bijnaam) {
+        return bijnamen.remove(bijnaam);
+    }
+    public Set<String> getBijnamen() {
+        return Collections.unmodifiableSet(bijnamen);
     }
 
     public void opslag(BigDecimal percentage) {
