@@ -36,15 +36,14 @@ class DocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests
     void beforeEach() {
         campus = new Campus("test", new Adres("test", "test", "test", "test"));
         docent = new Docent(
-                "test", "test", BigDecimal.TEN, "test@test.be", Geslacht.MAN);//, campus
-        campus.add(docent);
+                "test", "test", BigDecimal.TEN, "test@test.be", Geslacht.MAN, campus);//
     }
 
-  /*  @Test
+    @Test
     void campusLazyLoaded() {
         assertThat(repository.findById(idVanTestMan())).hasValueSatisfying(
                 docent -> assertThat(docent.getCampus().getNaam()).isEqualTo("test"));
-    }*/
+    }
 
     private long idVanTestMan() {
         return jdbcTemplate.queryForObject(

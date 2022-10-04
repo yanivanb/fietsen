@@ -19,18 +19,22 @@ public class Campus {
     @OrderBy("fax")
     private Set<TelefoonNr> telefoonNrs;
 
-    @OneToMany
-    @JoinColumn(name = "campusId")
+    @OneToMany(mappedBy = "campus")
     @OrderBy("voornaam, familienaam")
     private Set<Docent> docenten;
     public Set<Docent> getDocenten() {
         return Collections.unmodifiableSet(docenten);
     }
     public boolean add(Docent docent) {
-        if (docent == null) {
-            throw new NullPointerException();
+        var toegevoegd = docenten.add(docent);
+        var oudeCampus = docent.getCampus();
+        if (oudeCampus != null && oudeCampus != this) {
+            oudeCampus.docenten.remove(docent);
         }
-        return docenten.add(docent);
+        if (this != oudeCampus) {
+            docent.setCampus(this);
+        }
+        return toegevoegd;
     }
     protected Campus (){}
 
