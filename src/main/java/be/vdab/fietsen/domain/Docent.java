@@ -32,29 +32,32 @@ public class Docent {
     @Column(name = "bijnaam")
     private Set<String> bijnamen;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    /*@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "campusId")
     private Campus campus;
+    */
+
+
     @Enumerated(EnumType.STRING)
     private Geslacht geslacht;
 
 
     public Docent(String voornaam, String familienaam, BigDecimal wedde,
-                  String emailAdres, Geslacht geslacht, Campus campus) {
+                  String emailAdres, Geslacht geslacht) {//, Campus campus)
         this.voornaam = voornaam;
         this.familienaam = familienaam;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.geslacht = geslacht;
         this.bijnamen = new LinkedHashSet<>();
-        this.campus = campus;
+        //this.campus = campus;
     }
 
     protected Docent() {}
 
-    public Campus getCampus() {
+    /*public Campus getCampus() {
         return campus;
-    }
+    }*/
 
     public String getVoornaam() {
         return voornaam;
@@ -100,5 +103,15 @@ public class Docent {
         }
         var factor = BigDecimal.ONE.add(percentage.divide(BigDecimal.valueOf(100)));
         wedde = wedde.multiply(factor).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        return object instanceof Docent docent &&
+                emailAdres.equalsIgnoreCase(docent.emailAdres);
+    }
+    @Override
+    public int hashCode() {
+        return emailAdres == null ? 0 : emailAdres.toLowerCase().hashCode();
     }
 }

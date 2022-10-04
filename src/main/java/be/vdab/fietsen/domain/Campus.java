@@ -1,9 +1,7 @@
 package be.vdab.fietsen.domain;
 
 import javax.persistence.*;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "campussen")
@@ -20,12 +18,27 @@ public class Campus {
             joinColumns = @JoinColumn(name = "campusId"))
     @OrderBy("fax")
     private Set<TelefoonNr> telefoonNrs;
+
+    @OneToMany
+    @JoinColumn(name = "campusId")
+    @OrderBy("voornaam, familienaam")
+    private Set<Docent> docenten;
+    public Set<Docent> getDocenten() {
+        return Collections.unmodifiableSet(docenten);
+    }
+    public boolean add(Docent docent) {
+        if (docent == null) {
+            throw new NullPointerException();
+        }
+        return docenten.add(docent);
+    }
     protected Campus (){}
 
     public Campus(String naam, Adres adres) {
         this.naam = naam;
         this.adres = adres;
         this.telefoonNrs = new LinkedHashSet<>();
+        this.docenten = new LinkedHashSet<>();
     }
 
     public Set<TelefoonNr> getTelefoonNrs() {
@@ -42,5 +55,18 @@ public class Campus {
 
     public Adres getAdres() {
         return adres;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Campus campus = (Campus) o;
+        return naam.equalsIgnoreCase(campus.naam);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(naam.toLowerCase());
     }
 }

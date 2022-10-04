@@ -2,6 +2,7 @@ package be.vdab.fietsen.repositories;
 
 import be.vdab.fietsen.domain.Adres;
 import be.vdab.fietsen.domain.Campus;
+import be.vdab.fietsen.domain.Docent;
 import be.vdab.fietsen.domain.TelefoonNr;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // enkele andere imports
 @DataJpaTest(showSql = false)
 @Import(CampusRepository.class)
-@Sql("/insertCampus.sql")
+@Sql({"/insertCampus.sql", "/insertDocent.sql"})
 class CampusRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
     private static final String CAMPUSSEN = "campussen";
     private CampusRepository repository;
@@ -27,6 +28,16 @@ class CampusRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests
     private long idVanTestCampus() {
         return jdbcTemplate.queryForObject(
                 "select id from campussen where naam = 'test'", Long.class);
+    }
+
+    @Test
+    void docentenLazyLoaded() {
+        assertThat(repository.findById(idVanTestCampus()))
+.hasValueSatisfying(campus ->
+                assertThat(campus.getDocenten())
+                .hasSize(2)
+                .first()
+                .extracting(Docent::getVoornaam).isEqualTo("testM"));
     }
     @Test
     void findById() {
