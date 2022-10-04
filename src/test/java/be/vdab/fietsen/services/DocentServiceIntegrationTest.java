@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 // enkele andere imports
 @DataJpaTest(showSql = false)
 @Import({ DocentService.class, DocentRepository.class })
-@Sql("/insertDocent.sql")
+@Sql({"/insertCampus.sql", "/insertDocent.sql"})
 class DocentServiceIntegrationTest
         extends AbstractTransactionalJUnit4SpringContextTests {
     private final static String DOCENTEN = "docenten";

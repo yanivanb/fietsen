@@ -32,22 +32,29 @@ public class Docent {
     @Column(name = "bijnaam")
     private Set<String> bijnamen;
 
-
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "campusId")
+    private Campus campus;
     @Enumerated(EnumType.STRING)
     private Geslacht geslacht;
 
 
     public Docent(String voornaam, String familienaam, BigDecimal wedde,
-                  String emailAdres, Geslacht geslacht) {
+                  String emailAdres, Geslacht geslacht, Campus campus) {
         this.voornaam = voornaam;
         this.familienaam = familienaam;
         this.wedde = wedde;
         this.emailAdres = emailAdres;
         this.geslacht = geslacht;
         this.bijnamen = new LinkedHashSet<>();
+        this.campus = campus;
     }
 
     protected Docent() {}
+
+    public Campus getCampus() {
+        return campus;
+    }
 
     public String getVoornaam() {
         return voornaam;
