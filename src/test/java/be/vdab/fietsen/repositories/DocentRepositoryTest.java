@@ -1,9 +1,6 @@
 package be.vdab.fietsen.repositories;
 
-import be.vdab.fietsen.domain.Adres;
-import be.vdab.fietsen.domain.Campus;
-import be.vdab.fietsen.domain.Docent;
-import be.vdab.fietsen.domain.Geslacht;
+import be.vdab.fietsen.domain.*;
 import be.vdab.fietsen.projections.AantalDocentenPerWedde;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +15,8 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest(showSql = false)
-@Sql({"/insertCampus.sql", "/insertDocent.sql"})
+@Sql({"/insertCampus.sql", "/insertVerantwoordelijkheid.sql",
+        "/insertDocent.sql", "/insertDocentVerantwoordelijkheid.sql"})
 @Import(DocentRepository.class)
 class DocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests {
     private final DocentRepository repository;
@@ -26,6 +24,8 @@ class DocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests
     private Campus campus;
     private static final String DOCENTEN = "docenten";
     private Docent docent;
+
+    private static final String DOCENTEN_VERANTWOORDELIJKHEDEN = "docentenverantwoordelijkheden";
 
     public DocentRepositoryTest(DocentRepository repository, EntityManager manager){
         this.repository = repository;
@@ -165,5 +165,25 @@ class DocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests
                 .isEqualTo(countRowsInTable(DOCENTEN));
         assertThat(countRowsInTableWhere(DOCENTEN,
                 "wedde = 1100 and id = " + idVanTestMan())).isOne();
+    }
+
+    @Test
+    void verantwoordelijkhedenLezen() {
+        assertThat(repository.findById(idVanTestMan()))
+                .hasValueSatisfying(
+                        docent -> assertThat(docent.getVerantwoordelijkheden())
+                                .containsOnly(new Verantwoordelijkheid("test")));
+    }
+    @Test
+    void verantwoordelijkheidToevoegen() {
+        var verantwoordelijkheid = new Verantwoordelijkheid("test2");
+        manager.persist(verantwoordelijkheid);
+        manager.persist(campus);
+        repository.create(docent);
+        docent.add(verantwoordelijkheid);
+        manager.flush();
+        assertThat(countRowsInTableWhere(DOCENTEN_VERANTWOORDELIJKHEDEN,
+                "docentId = " + docent.getId() +
+                        " and verantwoordelijkheidId = " + verantwoordelijkheid.getId())).isOne();
     }
 }

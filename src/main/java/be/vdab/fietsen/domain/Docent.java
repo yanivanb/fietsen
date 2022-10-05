@@ -104,6 +104,31 @@ public class Docent {
         return Collections.unmodifiableSet(bijnamen);
     }
 
+    @ManyToMany
+    @JoinTable(
+            name = "docentenverantwoordelijkheden",
+            joinColumns = @JoinColumn(name = "docentId"),
+            inverseJoinColumns = @JoinColumn(name = "verantwoordelijkheidId"))
+    private Set<Verantwoordelijkheid> verantwoordelijkheden = new LinkedHashSet<>();
+
+    public boolean add(Verantwoordelijkheid verantwoordelijkheid) {
+        var toegevoegd = verantwoordelijkheden.add(verantwoordelijkheid);
+        if ( ! verantwoordelijkheid.getDocenten().contains(this)) {
+            verantwoordelijkheid.add(this);
+        }
+        return toegevoegd;
+    }
+    public boolean remove(Verantwoordelijkheid verantwoordelijkheid) {
+        var verwijderd = verantwoordelijkheden.remove(verantwoordelijkheid);
+        if (verantwoordelijkheid.getDocenten().contains(this)) {
+            verantwoordelijkheid.remove(this);
+        }
+        return verwijderd;
+    }
+    public Set<Verantwoordelijkheid> getVerantwoordelijkheden() {
+        return Collections.unmodifiableSet(verantwoordelijkheden);
+    }
+
     public void opslag(BigDecimal percentage) {
         if (percentage.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException();
