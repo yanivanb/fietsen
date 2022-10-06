@@ -123,10 +123,13 @@ class DocentRepositoryTest extends AbstractTransactionalJUnit4SpringContextTests
         var duizend = BigDecimal.valueOf(1_000);
         var tweeduizend = BigDecimal.valueOf(2_000);
         var docenten = repository.findByWeddeBetween(duizend, tweeduizend);
+        manager.clear();
         assertThat(docenten)
                 .hasSize(countRowsInTableWhere(DOCENTEN, "wedde between 1000 and 2000"))
                 .allSatisfy(
-                        docent -> assertThat(docent.getWedde()).isBetween(duizend, tweeduizend));
+                        docent -> assertThat(docent.getWedde()).isBetween(duizend, tweeduizend))
+                .extracting(Docent::getCampus)
+                .extracting(Campus::getNaam).isNotNull();
     }
 
     @Test void findEmailAdressen() {

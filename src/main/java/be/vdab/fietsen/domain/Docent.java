@@ -18,6 +18,7 @@ import java.util.Set;
                 where d.wedde between :van and :tot
                 order by d.wedde, d.id
                 """)*/
+@NamedEntityGraph(name = Docent.MET_CAMPUS, attributeNodes = @NamedAttributeNode("campus"))
 public class Docent {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -26,6 +27,7 @@ public class Docent {
     private BigDecimal wedde;
     private String emailAdres;
 
+    public static final String MET_CAMPUS = "Docent.metCampus";
     @ElementCollection
     @CollectionTable(name = "docentenbijnamen",
             joinColumns = @JoinColumn(name = "docentId") )
