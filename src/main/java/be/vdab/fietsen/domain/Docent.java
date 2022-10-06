@@ -5,6 +5,7 @@ import javax.persistence.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -27,6 +28,8 @@ public class Docent {
     private BigDecimal wedde;
     private String emailAdres;
 
+    @Version
+    private Timestamp versie;
     public static final String MET_CAMPUS = "Docent.metCampus";
     @ElementCollection
     @CollectionTable(name = "docentenbijnamen",

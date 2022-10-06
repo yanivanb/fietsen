@@ -6,6 +6,7 @@ import be.vdab.fietsen.projections.IdEnEmailAdres;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -81,5 +82,11 @@ public class DocentRepository {
     public int algemeneOpslag(BigDecimal percentage) {
         return manager.createNamedQuery("Docent.algemeneOpslag")
                 .setParameter("percentage", percentage).executeUpdate();
+    }
+
+
+    public Optional<Docent> findByIdWithLock(long id) {
+        return Optional.ofNullable(
+                manager.find(Docent.class, id, LockModeType.PESSIMISTIC_WRITE));
     }
 }
